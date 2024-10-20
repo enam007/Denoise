@@ -1,4 +1,11 @@
-// TODO: background script
+import { setStoredOptions } from "../utils/storage";
 chrome.runtime.onInstalled.addListener(() => {
-  // TODO: on installed function
-})
+  setStoredOptions({
+    hideComments: false,
+    hideLiveChat: false,
+    hidePlaylist: false,
+    hideRecommended: false,
+    hideShorts: true,
+    hideTopHeader: false,
+  });
+});
