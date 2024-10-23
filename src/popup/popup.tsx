@@ -8,6 +8,7 @@ import {
 import ToggleSwitch from "../components/Toggle";
 import "../style.css";
 import { ShowOptions, ShowOptionsType } from "../utils/constant";
+import { messages } from "../utils/messages";
 
 const App: React.FC<{}> = () => {
   const defaultOptions: LocalStorageOptions = {
@@ -23,11 +24,25 @@ const App: React.FC<{}> = () => {
 
   const handleToggle = (key: keyof LocalStorageOptions) => {
     setOptions((prevOptions) => {
+      const isChecked = prevOptions[key];
       const updatedOptions = {
         ...prevOptions,
-        [key]: !prevOptions[key],
+        [key]: !isChecked,
       };
       setStoredOptions(updatedOptions);
+      const messageAction = messages[key];
+      if (messageAction) {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          if (tabs[0]) {
+            // Ensure there is an active tab
+            chrome.tabs.sendMessage(tabs[0].id, {
+              action: messageAction.action,
+              hide: !updatedOptions[key], // Send the new toggle state
+              key: key,
+            });
+          }
+        });
+      }
       return updatedOptions;
     });
   };
