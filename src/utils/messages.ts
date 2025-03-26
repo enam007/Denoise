@@ -5,6 +5,9 @@ export enum ActionTypes {
   TOGGLE_SHORTS,
   TOGGLE_COMMENTS,
   TOGGLE_TOP_HEADER,
+  TOGGLE_MERCH,
+  TOGGLE_VIDEOINFO,
+  TOGGLE_SUMMARY,
 }
 
 export const messages = {
@@ -14,4 +17,7 @@ export const messages = {
   hideShorts: { action: ActionTypes.TOGGLE_SHORTS },
   hideComments: { action: ActionTypes.TOGGLE_COMMENTS },
   hideTopHeader: { action: ActionTypes.TOGGLE_TOP_HEADER },
+  hideMerch: { action: ActionTypes.TOGGLE_MERCH },
+  hideVideoInfo: { action: ActionTypes.TOGGLE_VIDEOINFO },
+  summary: { action: ActionTypes.TOGGLE_SUMMARY },
 };

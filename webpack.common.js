@@ -9,6 +9,7 @@ module.exports = {
     options: path.resolve("src/options/options.tsx"),
     background: path.resolve("src/background/background.ts"),
     contentScript: path.resolve("src/contentScript/contentScript.tsx"),
+    workflow: path.resolve("src/agents/workflow/youtubeAgentWorkflow.ts"),
   },
   module: {
     rules: [
@@ -19,7 +20,10 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        include: path.resolve(__dirname, "src"),
+        include: [
+          path.resolve(__dirname, "src"),
+          path.resolve(__dirname, "node_modules"),
+        ],
         use: ["style-loader", "css-loader", "postcss-loader"],
       },
       {

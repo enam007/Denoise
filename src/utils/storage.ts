@@ -11,6 +11,9 @@ export interface LocalStorageOptions {
   hideShorts: boolean;
   hideComments: boolean;
   hideTopHeader: boolean;
+  hideMerch: boolean;
+  hideVideoInfo: boolean;
+  summary: boolean;
 }
 
 export async function setStoredOptions(

@@ -1,15 +1,22 @@
 export const hideElement = (selector: string): void => {
-  const element = document.querySelector<HTMLElement>(selector);
-  console.log(element);
-  if (element) {
-    element.style.display = "none";
+  const elements = document.querySelectorAll<HTMLElement>(selector);
+  console.log("hide\t", elements);
+
+  if (elements.length > 0) {
+    elements.forEach((element) => {
+      element.style.display = "none";
+    });
   }
 };
 
 export const showElement = (selector: string): void => {
-  const element = document.querySelector<HTMLElement>(selector);
-  if (element) {
-    element.style.display = "";
+  const elements = document.querySelectorAll<HTMLElement>(selector);
+  console.log("show\t", elements);
+
+  if (elements.length > 0) {
+    elements.forEach((element) => {
+      element.style.display = "";
+    });
   }
 };
 
@@ -17,7 +24,7 @@ export const pollForElement = (
   selector,
   callback,
   interval = 500,
-  maxAttempts = 10
+  maxAttempts = 5
 ) => {
   let attempts = 0;
   const intervalId = setInterval(() => {
@@ -28,6 +35,7 @@ export const pollForElement = (
         callback(element);
       }
     }
+    console.log("polling");
     attempts++;
   }, interval);
 };
