@@ -58,6 +58,7 @@ async function generateSummary(
     return {
       ...state,
       summary: summaryModel,
+      last_node: "generateSummary",
     };
   } catch (error) {
     console.error("Error generating summary:", error);

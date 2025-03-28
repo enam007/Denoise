@@ -7,6 +7,7 @@ import { humanReview } from "../nodes/humanReview";
 import { reviseBlog } from "../nodes/reviseBlog";
 import { generateQuiz } from "../nodes/generateQuiz";
 import { shouldContinue } from "../nodes/shouldContinue";
+import { memorySaver } from "./memorySaver";
 
 const workflow = new StateGraph<YoutubeBlogState>({ channels })
   .addNode("extractTranscript", extractTranscript)
@@ -15,7 +16,11 @@ const workflow = new StateGraph<YoutubeBlogState>({ channels })
   .addNode("humanReview", humanReview)
   .addNode("reviseBlog", reviseBlog)
   .addNode("generateQuiz", generateQuiz)
-  .addEdge(START, "extractTranscript")
+  .addConditionalEdges("__start__", (state) => {
+    return state.last_node === "humanReview"
+      ? "humanReview"
+      : "extractTranscript";
+  })
   .addEdge("extractTranscript", "generateSummary")
   .addEdge("generateSummary", "generateBlog")
   .addEdge("generateBlog", "humanReview")
@@ -28,6 +33,6 @@ const workflow = new StateGraph<YoutubeBlogState>({ channels })
 
 // Compile Graph
 const executor = workflow.compile();
-
+console.log("GraphCompiled");
 // Export Workflow
 export { executor, workflow };

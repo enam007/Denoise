@@ -64,6 +64,7 @@ async function reviseBlog(state: YoutubeBlogState): Promise<YoutubeBlogState> {
     return {
       ...state,
       blog_post: revisedBlog,
+      last_node: "reviseBlog",
     };
   } catch (error) {
     console.error("Error while revising blog:", error);

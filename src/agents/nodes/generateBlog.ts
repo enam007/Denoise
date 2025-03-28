@@ -69,6 +69,7 @@ async function generateBlog(
     return {
       ...state,
       blog_post: blogModel,
+      last_node: "generateBlog",
     };
   } catch (error) {
     console.error("Error generating blog post:", error);

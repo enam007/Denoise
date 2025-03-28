@@ -40,6 +40,7 @@ async function extractTranscript(
     return {
       ...state,
       transcript: transcriptText,
+      last_node: "extractTranscript",
     };
   } catch (error) {
     console.error("Error Extracting Transcript:", error);

@@ -35,6 +35,8 @@ export interface YoutubeBlogState {
   human_feedback?: string;
   max_quiz_question?: number;
   text_leveler?: number;
+  last_node?: string;
+  __start__?: string;
 }
 
 export const channels = {
@@ -73,5 +75,9 @@ export const channels = {
   text_leveler: {
     value: (current?: number, update?: number) => update ?? current ?? 0,
     default: () => 1,
+  },
+  last_node: {
+    value: (current?: string, update?: string) => update ?? current ?? "START",
+    default: () => "START",
   },
 };

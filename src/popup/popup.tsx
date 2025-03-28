@@ -30,6 +30,7 @@ const App: React.FC<{}> = () => {
   const [reviewState, setReviewState] = useState<any>(null);
   const [reviewVisible, setReviewVisible] = useState(false);
   const [blogPost, setBlogPost] = useState<string>("");
+  const [currentTabUrl, setCurrentTabUrl] = useState("");
   const handleToggle = (key: keyof LocalStorageOptions) => {
     setOptions((prevOptions) => {
       const isChecked = prevOptions[key];
@@ -54,6 +55,20 @@ const App: React.FC<{}> = () => {
       return updatedOptions;
     });
   };
+
+  useEffect(() => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]) {
+        setCurrentTabUrl(tabs[0].url);
+
+        chrome.runtime.sendMessage({
+          action: "CURRENT_TAB_URL",
+          url: tabs[0].url,
+        });
+      }
+    });
+  }, []);
+
   useEffect(() => {
     chrome.runtime.onMessage.addListener(handlePopupMessage);
     return () => {
@@ -77,28 +92,25 @@ const App: React.FC<{}> = () => {
     fetchOptions();
   }, []);
   const startWorkflow = () => {
-    if (!videoUrl.trim()) {
-      alert("Please enter a YouTube video URL");
-      return;
-    }
+    // if (!videoUrl.trim()) {
+    //   alert("Please enter a YouTube video URL");
+    //   return;
+    // }
 
     setIsProcessing(true);
 
-    // Send the video URL to `background.ts`
-    chrome.runtime.sendMessage(
-      { action: "start_workflow", video_url: videoUrl },
-      (response) => {
-        setIsProcessing(false);
-        if (response?.success) {
-          chrome.runtime.onMessage.addListener(handleBackgroundMessage);
-          //alert("Workflow completed! Check console for details.");
-          console.log("Workflow Output:", response.state);
-        } else {
-          alert("Workflow failed. Check console.");
-          console.error("Error:", response?.error);
-        }
+    //   // Send the video URL to `background.ts`
+    chrome.runtime.sendMessage({ action: "START_WORKFLOW" }, (response) => {
+      setIsProcessing(false);
+      if (response?.success) {
+        chrome.runtime.onMessage.addListener(handleBackgroundMessage);
+        //alert("Workflow completed! Check console for details.");
+        console.log("Workflow Output:", response.state);
+      } else {
+        alert("Workflow failed. Check console.");
+        console.error("Error:", response?.error);
       }
-    );
+    });
   };
 
   const handleBackgroundMessage = (message, sender, sendResponse) => {
@@ -118,16 +130,27 @@ const App: React.FC<{}> = () => {
     feedback: string,
     level: number
   ) => {
-    chrome.runtime.sendMessage({
-      action: "reviewResult",
-      state: {
-        ...reviewState,
-        review_approved: approved,
-        human_feedback: feedback,
-        text_leveler: level,
-      },
+    chrome.runtime.sendMessage({ action: "GET_WORKFLOW_STATE" }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error(chrome.runtime.lastError.message);
+        return;
+      }
+      if (response?.state) {
+        console.log("Workflow State:", response.state);
+        chrome.runtime.sendMessage({
+          action: "REVIEW_SUBMITTED",
+          state: {
+            ...response.state,
+            review_approved: approved,
+            human_feedback: feedback,
+            text_leveler: level,
+            last_node: "humanReview",
+            __start__: "generateBlog",
+          },
+        });
+        setReviewVisible(false);
+      }
     });
-    setReviewVisible(false);
   };
   return (
     <div className="w-[22.7rem] h-auto rounded-lg border border-gray-300 shadow-lg p-4">

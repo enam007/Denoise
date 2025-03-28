@@ -86,6 +86,7 @@ async function generateQuiz(
     return {
       ...state,
       quiz_questions: quizModel,
+      last_node: "generateQuiz",
     };
   } catch (error) {
     console.error("Error while generating quiz:", error);
