@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { ActionTypes } from "../utils/messages";
 import { hideElement, pollForElement, showElement } from "../utils/domHandller";
 import { getStoredOptions, LocalStorageOptions } from "../utils/storage";
+import "../style.css";
 
 import {
   OptionsSelectors,
@@ -140,19 +141,30 @@ const App: React.FC<{}> = () => {
   return <div>{summary ? <Card /> : null}</div>;
 };
 let isComponentInjected = false;
+
 const injectComponent = () => {
-  if (isComponentInjected) return;
-  const secondaryElement = document.getElementById("secondary");
+  if (document.getElementById("my-extension-root")) {
+    console.log("Component already injected.");
+    return;
+  }
+
+  const secondaryElement = document.getElementById("secondary"); // ✅ YouTube's right panel
   const rootElement = document.createElement("div");
+  rootElement.id = "my-extension-root";
+
+  // ✅ Optional: Add some spacing and unique styling to the container
+  rootElement.style.marginTop = "16px"; // space from top
+  rootElement.style.padding = "8px"; // inner padding (optional)
+  rootElement.style.zIndex = "9999"; // ensure it's on top (if needed)
 
   if (secondaryElement) {
-    isComponentInjected = true;
     secondaryElement.insertBefore(rootElement, secondaryElement.firstChild);
-    //secondaryElement.appendChild(rootElement);
+
+    // ✅ Mount React app inside this container
     const root = createRoot(rootElement);
     root.render(<App />);
   } else {
-    console.log("Element Not Found");
+    console.log("Element #secondary Not Found");
   }
 };
 

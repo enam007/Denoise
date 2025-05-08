@@ -4,11 +4,11 @@ export interface SummaryModel {
 }
 
 export interface QuestionModel {
-  question: string; // The quiz question that needs to be answered.
-  options: [string, string, string, string]; // Exactly four answer choices
-  correct_option: string; // The correct answer from the given options.
-  explanation: string; // Explanation of why the correct answer is correct.
-  topic: string; // Subject/category of the question
+  question: string; // Optional
+  options: [string, string, string, string]; // Optional
+  correct_option: string; // Optional
+  explanation: string; // Optional
+  topic: string; // Optional
 }
 
 export interface QuizModel {

@@ -92,23 +92,28 @@ const App: React.FC<{}> = () => {
     fetchOptions();
   }, []);
   const startWorkflow = () => {
-    // if (!videoUrl.trim()) {
-    //   alert("Please enter a YouTube video URL");
-    //   return;
-    // }
-
     setIsProcessing(true);
 
-    //   // Send the video URL to `background.ts`
     chrome.runtime.sendMessage({ action: "START_WORKFLOW" }, (response) => {
-      setIsProcessing(false);
       if (response?.success) {
-        chrome.runtime.onMessage.addListener(handleBackgroundMessage);
-        //alert("Workflow completed! Check console for details.");
-        console.log("Workflow Output:", response.state);
+        console.log("Workflow started successfully.");
       } else {
-        alert("Workflow failed. Check console.");
-        console.error("Error:", response?.error);
+        console.log("Workflow acknowledged but not yet completed.");
+      }
+    });
+
+    // Listen for the workflow completion message
+    chrome.runtime.onMessage.addListener((message) => {
+      if (message.action === "WORKFLOW_COMPLETED") {
+        setIsProcessing(false);
+
+        if (message.success) {
+          chrome.runtime.onMessage.addListener(handleBackgroundMessage);
+          console.log("Workflow Output:", message.state);
+        } else {
+          alert("Workflow failed. Check console.");
+          console.error("Error:", message.error);
+        }
       }
     });
   };
@@ -165,7 +170,7 @@ const App: React.FC<{}> = () => {
           />
         ))}
       </div>
-      <div className="w-[22.7rem] h-auto rounded-lg border border-gray-300 shadow-lg p-4">
+      {/* <div className="w-[22.7rem] h-auto rounded-lg border border-gray-300 shadow-lg p-4">
         <input
           type="text"
           placeholder="Enter YouTube video URL"
@@ -184,7 +189,7 @@ const App: React.FC<{}> = () => {
         {reviewVisible && reviewState && (
           <ReviewPopup state={reviewState} onReview={handleReviewApproval} />
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

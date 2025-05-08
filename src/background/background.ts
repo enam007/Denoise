@@ -94,7 +94,30 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       };
     }
   } else if (request.action === "START_WORKFLOW") {
-    executeWorkflow();
+    // Send an immediate acknowledgment to popup.tsx
+    sendResponse({ success: false, message: "Workflow started" });
+
+    // Execute the workflow asynchronously
+    executeWorkflow()
+      .then(() => {
+        // Notify popup.tsx when the workflow completes
+        chrome.runtime.sendMessage({
+          action: "WORKFLOW_COMPLETED",
+          success: true,
+          state: workflowState, // Send the final state
+        });
+      })
+      .catch((error) => {
+        console.error("Workflow execution failed:", error);
+        chrome.runtime.sendMessage({
+          action: "WORKFLOW_COMPLETED",
+          success: false,
+          error: error.message,
+        });
+      });
+
+    // Return true to keep the message channel open for async response
+    return true;
   }
   if (request.action === "REVIEW_SUBMITTED") {
     console.log("Review result received:", request.state);

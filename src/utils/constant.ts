@@ -41,5 +41,5 @@ export const OptionsSelectors: ShowOptionsType = {
   hideVideoInfo: "ytd-watch-metadata",
   summary: "",
   hideMerch:
-    "ytd-ad-slot-renderer, #player-ads, ytd-merch-shelf-renderer, yt-alert-with-actions-renderer, .ytp-drawer, #ticket-shelf, #offer-module,  #clarify-box, ytd-metadata-row-container-renderer",
+    "ytd-ad-slot-renderer, #player-ads, ytd-merch-shelf-renderer, yt-alert-with-actions-renderer, .ytp-drawer, #ticket-shelf, #offer-module,  #clarify-box, ytd-metadata-row-container-renderer, ytd-engagement-panel-section-list-renderer, panel-ad-header-image-lockup-view-model",
 } as const;

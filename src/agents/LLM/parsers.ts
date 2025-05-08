@@ -17,7 +17,7 @@ export const quizParser = StructuredOutputParser.fromZodSchema(
     questions: z.array(
       z.object({
         question: z.string(),
-        options: z.array(z.string()).length(4),
+        options: z.tuple([z.string(), z.string(), z.string(), z.string()]),
         correct_option: z.string(),
         explanation: z.string(),
         topic: z.string(),

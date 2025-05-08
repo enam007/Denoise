@@ -65,7 +65,14 @@ async function generateBlog(
     }
 
     console.log("Generated Blog Post:", blogModel);
-
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: "sendBlog",
+          blogPost: blogModel,
+        });
+      }
+    });
     return {
       ...state,
       blog_post: blogModel,

@@ -55,6 +55,14 @@ async function generateSummary(
       format_instructions: summaryParser.getFormatInstructions(),
     });
     //const summaryModel: SummaryModel = await prompt.invoke({ transcript });
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: "sendSummary",
+          summary: summaryModel,
+        });
+      }
+    });
     return {
       ...state,
       summary: summaryModel,

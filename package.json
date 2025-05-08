@@ -34,6 +34,7 @@
     "@langchain/langgraph-checkpoint": "^0.0.16",
     "highlight.js": "^11.11.1",
     "langchain": "^0.3.19",
+    "lucide-react": "^0.508.0",
     "postcss": "^8.4.41",
     "postcss-loader": "^8.1.1",
     "postcss-preset-env": "^10.0.2",
