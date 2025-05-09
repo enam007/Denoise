@@ -6,6 +6,7 @@ import { SummaryModel } from "../agents/types";
 
 const tabs = ["Summary", "Blog", "Quiz", "Result"];
 
+let previousUrl = "";
 const Card: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Summary");
   const [isOpen, setIsOpen] = useState(false);
@@ -14,13 +15,28 @@ const Card: React.FC = () => {
   const [reviewVisible, setReviewVisible] = useState(false);
   const [summaryText, setSummaryText] = useState<SummaryModel>(null);
   const [blogPost, setBlogPost] = useState<string>("");
+  const [videoUrl, setVideoUrl] = useState("");
+
   const [reviewAction, setReviewAction] = useState<
     "approved" | "rejected" | ""
   >("");
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const currentUrl = window.location.href;
+      if (currentUrl !== previousUrl) {
+        console.log("URL changed:", currentUrl);
+        setIsOpen(false);
+        setIsProcessing(false);
+        setReviewAction("");
+      }
+    }, 1000); // check every second
 
+    return () => clearInterval(interval);
+  }, []);
   useEffect(() => {
     chrome.runtime.onMessage.addListener(handleSummary);
     chrome.runtime.onMessage.addListener(handleBlog);
+
     return () => {
       chrome.runtime.onMessage.removeListener(handleSummary);
       chrome.runtime.onMessage.removeListener(handleBlog);
@@ -71,16 +87,26 @@ const Card: React.FC = () => {
   };
   // Start Workflow function
   const startWorkflow = () => {
+    if (summaryText && window.location.href === previousUrl) {
+      console.log(
+        "Summary already exists for this URL. Workflow not restarted."
+      );
+      return;
+    }
     setIsProcessing(true); // Set the processing state to true
-
-    // Send message to start the workflow
-    chrome.runtime.sendMessage({ action: "START_WORKFLOW" }, (response) => {
-      if (response?.success) {
-        console.log("Workflow started successfully.");
-      } else {
-        console.log("Workflow acknowledged but not yet completed.");
+    const currentUrl = window.location.href;
+    previousUrl = currentUrl;
+    setVideoUrl(currentUrl);
+    chrome.runtime.sendMessage(
+      { action: "START_WORKFLOW", video_url: currentUrl },
+      (response) => {
+        if (response?.success) {
+          console.log("Workflow started successfully.");
+        } else {
+          console.log("Workflow acknowledged but not yet completed.");
+        }
       }
-    });
+    );
 
     // Listen for the workflow completion message
     chrome.runtime.onMessage.addListener((message) => {

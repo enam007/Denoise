@@ -16,6 +16,7 @@ const App: React.FC<{}> = () => {
   const [isActive, setIsActive] = useState(false);
   const [options, setOptions] = useState<LocalStorageOptions | null>(null);
   const [summary, setSummary] = useState<boolean>(false);
+  const [isTabUrlChanged, setIsTabUrlChanged] = useState(false);
   console.log("Content script loaded");
 
   const toggleVisibility = (selector: string, shouldHide: boolean) => {
@@ -126,6 +127,7 @@ const App: React.FC<{}> = () => {
           setIsActive(hide);
           console.log("toggleSummary", summary);
           break;
+
         default:
           console.warn(`Unknown action: ${action}`);
       }
